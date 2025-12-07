@@ -23,7 +23,7 @@ else()
   set(ENABLE_WARNINGS_AS_ERRORS_DEFAULT ON)
   set(ENABLE_IPO_DEFAULT ON)
   set(ENABLE_ASAN_DEFAULT ON)
-  set(ENABLE_TSAN_DEFAULT ON)
+  set(ENABLE_TSAN_DEFAULT OFF)  # TSan is mutually exclusive with ASan
   set(ENABLE_UBSAN_DEFAULT ON)
   set(ENABLE_CLANG_TIDY_DEFAULT ON)
   set(ENABLE_CPPCHECK_DEFAULT ON)
@@ -63,6 +63,11 @@ if(ENABLE_IPO)
   else()
     message(SEND_ERROR "IPO is not supported: ${ipo_output}")
   endif()
+endif()
+
+# Sanitizer mutual exclusivity check
+if(ENABLE_ASAN AND ENABLE_TSAN)
+  message(FATAL_ERROR "ASan and TSan cannot be enabled simultaneously. Disable one of ENABLE_ASAN or ENABLE_TSAN.")
 endif()
 
 # Address sanitizer
@@ -140,15 +145,9 @@ target_link_libraries(order_engine PRIVATE project_warnings)
 
 # Emscripten-specific configuration
 if(EMSCRIPTEN)
-
-  unset(EXTRA_FLAGS)
-  if (WASM_SINGLE_FILE)
-    set(EXTRA_FLAGS "-s SINGLE_FILE=1")
-  endif()
   set_target_properties(order_engine PROPERTIES
     SUFFIX ".js"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/web"
-    ${EXTRA_FLAGS}
   )
   
   # Emscripten compile options
@@ -165,6 +164,7 @@ if(EMSCRIPTEN)
     -sENVIRONMENT=web,worker,node
     -sALLOW_MEMORY_GROWTH=1
     -sDISABLE_EXCEPTION_CATCHING=1
+    $<$<BOOL:${WASM_SINGLE_FILE}>:-sSINGLE_FILE=1>
   )
   
   # Copy web assets to build directory
