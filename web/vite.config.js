@@ -33,6 +33,7 @@ export default defineConfig({
     define: {
         __PROJECT_NAME__: JSON.stringify(projectConfig.name),
         __PROJECT_DISPLAY_NAME__: JSON.stringify(projectConfig.display_name),
+        __WASM_MODULE_PATH__: JSON.stringify(`./${projectConfig.name}.js`),
     },
 });
 
