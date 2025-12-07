@@ -18,7 +18,7 @@ if(ENABLE_CLANG_TIDY)
 endif()
 
 add_executable(example_test example_test.cpp)
-target_link_libraries(example_test PRIVATE order_engine_warnings GTest::gtest_main)
+target_link_libraries(example_test PRIVATE GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(example_test)
