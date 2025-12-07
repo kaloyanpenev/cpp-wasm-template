@@ -7,12 +7,37 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(ENABLE_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
-option(ENABLE_IPO "Enable IPO/LTO when supported" ON)
-option(ENABLE_ASAN "Enable address sanitizer" ON)
-option(ENABLE_CLANG_TIDY "Run clang-tidy during builds" ON)
-option(ENABLE_CPPCHECK "Run cppcheck during builds" ON)
-option(ENABLE_IWYU "Run include-what-you-use during builds" OFF)
+# Emscripten detection - disable incompatible features
+if(EMSCRIPTEN)
+  message(STATUS "Building with Emscripten")
+  set(ENABLE_WARNINGS_AS_ERRORS_DEFAULT OFF)
+  set(ENABLE_IPO_DEFAULT OFF)
+  set(ENABLE_ASAN_DEFAULT OFF)
+  set(ENABLE_TSAN_DEFAULT OFF)
+  set(ENABLE_UBSAN_DEFAULT OFF)
+  set(ENABLE_CLANG_TIDY_DEFAULT OFF)
+  set(ENABLE_CPPCHECK_DEFAULT OFF)
+  set(ENABLE_IWYU_DEFAULT OFF)
+  option(WASM_SINGLE_FILE "Embed WASM inside the generated .js" ON)
+else()
+  set(ENABLE_WARNINGS_AS_ERRORS_DEFAULT ON)
+  set(ENABLE_IPO_DEFAULT ON)
+  set(ENABLE_ASAN_DEFAULT ON)
+  set(ENABLE_TSAN_DEFAULT ON)
+  set(ENABLE_UBSAN_DEFAULT ON)
+  set(ENABLE_CLANG_TIDY_DEFAULT ON)
+  set(ENABLE_CPPCHECK_DEFAULT ON)
+  set(ENABLE_IWYU_DEFAULT OFF)
+endif()
+
+option(ENABLE_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ${ENABLE_WARNINGS_AS_ERRORS_DEFAULT})
+option(ENABLE_IPO "Enable IPO/LTO when supported" ${ENABLE_IPO_DEFAULT})
+option(ENABLE_ASAN "Enable address sanitizer" ${ENABLE_ASAN_DEFAULT})
+option(ENABLE_TSAN "Enable thread sanitizer" ${ENABLE_TSAN_DEFAULT})
+option(ENABLE_UBSAN "Enable undefined behavior sanitizer" ${ENABLE_UBSAN_DEFAULT})
+option(ENABLE_CLANG_TIDY "Run clang-tidy during builds" ${ENABLE_CLANG_TIDY_DEFAULT})
+option(ENABLE_CPPCHECK "Run cppcheck during builds" ${ENABLE_CPPCHECK_DEFAULT})
+option(ENABLE_IWYU "Run include-what-you-use during builds" ${ENABLE_IWYU_DEFAULT})
 
 # Compiler warnings (as interface library to apply only to project targets)
 add_library(project_warnings INTERFACE)
@@ -46,6 +71,24 @@ if(ENABLE_ASAN AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
   add_link_options(-fsanitize=address)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_link_options(-static-libasan)
+  endif()
+endif()
+
+# Thread sanitizer
+if(ENABLE_TSAN AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+  add_compile_options(-fsanitize=thread)
+  add_link_options(-fsanitize=thread)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_link_options(-static-libtsan)
+  endif()
+endif()
+
+# Undefined behavior sanitizer
+if(ENABLE_UBSAN AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
+  add_compile_options(-fsanitize=undefined)
+  add_link_options(-fsanitize=undefined)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_link_options(-static-libubsan)
   endif()
 endif()
 
@@ -95,7 +138,42 @@ endif()
 add_executable(order_engine src/main.cpp)
 target_link_libraries(order_engine PRIVATE project_warnings)
 
+# Emscripten-specific configuration
+if(EMSCRIPTEN)
+
+  unset(EXTRA_FLAGS)
+  if (GGWEB_WASM_SINGLE_FILE)
+    set(EXTRA_FLAGS "-s SINGLE_FILE=1")
+  endif()
+  set_target_properties(order_engine PROPERTIES
+    SUFFIX ".js"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/web"
+    ${EXTRA_FLAGS}
+  )
+  
+  # Emscripten compile options
+  target_compile_options(order_engine PRIVATE
+    -sNO_DISABLE_EXCEPTION_CATCHING
+  )
+  
+  # Emscripten link options
+  target_link_options(order_engine PRIVATE
+    -sWASM=1
+    -sEXPORT_ES6=1
+    -sMODULARIZE=1
+    -sEXPORT_NAME=OrderEngine
+    -sENVIRONMENT=web,worker,node
+    -sALLOW_MEMORY_GROWTH=1
+    -sDISABLE_EXCEPTION_CATCHING=1
+  )
+  
+  # Copy web assets to build directory
+  file(GLOB WEB_ASSETS "${CMAKE_SOURCE_DIR}/web/*")
+  file(COPY ${WEB_ASSETS} DESTINATION "${CMAKE_BINARY_DIR}/web")
+endif()
+
+enable_testing()
 include(CTest)
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT EMSCRIPTEN)
   add_subdirectory(test)
 endif()

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Engine - WebAssembly</title>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent: #58a6ff;
+      --accent-glow: rgba(88, 166, 255, 0.3);
+      --border: #30363d;
+      --success: #3fb950;
+      --error: #f85149;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      background-image: 
+        radial-gradient(ellipse at top, rgba(88, 166, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-primary) 0%, #0a0e14 100%);
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent) 0%, #a371f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .status-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .status-indicator.loading {
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+      animation: pulse 1.5s infinite;
+    }
+    
+    .status-indicator.ready {
+      background: var(--success);
+      box-shadow: 0 0 12px rgba(63, 185, 80, 0.4);
+    }
+    
+    .status-indicator.error {
+      background: var(--error);
+      box-shadow: 0 0 12px rgba(248, 81, 73, 0.4);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.95); }
+    }
+    
+    .status-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .console {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .console-line {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+    }
+    
+    .console-line:last-child {
+      border-bottom: none;
+    }
+    
+    .console-time {
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    
+    .console-msg {
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+    
+    .console-msg.info { color: var(--accent); }
+    .console-msg.success { color: var(--success); }
+    .console-msg.error { color: var(--error); }
+    
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    button {
+      flex: 1;
+      padding: 0.875rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    button:hover:not(:disabled) {
+      background: var(--border);
+      border-color: var(--accent);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+      font-weight: 600;
+    }
+    
+    button.primary:hover:not(:disabled) {
+      background: #79b8ff;
+      border-color: #79b8ff;
+    }
+    
+    footer {
+      margin-top: auto;
+      padding-top: 3rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Order Engine</h1>
+      <p class="subtitle">WebAssembly Build</p>
+    </header>
+    
+    <div class="status-card">
+      <div class="status-header">
+        <div id="status-indicator" class="status-indicator"></div>
+        <span class="status-label">Module Status</span>
+      </div>
+      <div id="console" class="console">
+        <div class="console-line">
+          <span class="console-time">--:--:--</span>
+          <span class="console-msg info">Waiting to load module...</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button id="load-btn" class="primary">Load Module</button>
+      <button id="clear-btn">Clear Console</button>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Built with <a href="https://emscripten.org" target="_blank">Emscripten</a></p>
+  </footer>
+  
+  <script type="module">
+    const consoleEl = document.getElementById('console');
+    const statusIndicator = document.getElementById('status-indicator');
+    const loadBtn = document.getElementById('load-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    
+    let module = null;
+    
+    function log(msg, type = '') {
+      const now = new Date();
+      const time = now.toTimeString().slice(0, 8);
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      line.innerHTML = `
+        <span class="console-time">${time}</span>
+        <span class="console-msg ${type}">${msg}</span>
+      `;
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+    
+    function setStatus(status) {
+      statusIndicator.className = `status-indicator ${status}`;
+    }
+    
+    clearBtn.addEventListener('click', () => {
+      consoleEl.innerHTML = '';
+      log('Console cleared', 'info');
+    });
+    
+    loadBtn.addEventListener('click', async () => {
+      if (module) {
+        log('Module already loaded', 'info');
+        return;
+      }
+      
+      consoleEl.innerHTML = '';
+      log('Loading WebAssembly module...', 'info');
+      setStatus('loading');
+      loadBtn.disabled = true;
+      
+      try {
+        // Dynamic import of the ES6 module generated by Emscripten
+        const OrderEngineModule = await import('./order_engine.js');
+        
+        log('Initializing module...', 'info');
+        
+        // Create module instance with custom print handlers
+        module = await OrderEngineModule.default({
+          print: (text) => log(text),
+          printErr: (text) => log(text, 'error'),
+        });
+        
+        log('Module loaded successfully!', 'success');
+        setStatus('ready');
+        loadBtn.textContent = 'Module Loaded';
+        
+      } catch (err) {
+        log(`Failed to load module: ${err.message}`, 'error');
+        setStatus('error');
+        loadBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
+
