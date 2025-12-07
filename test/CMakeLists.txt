@@ -21,4 +21,4 @@ add_executable(example_test example_test.cpp)
 target_link_libraries(example_test PRIVATE GTest::gtest_main project_warnings)
 
 include(GoogleTest)
-gtest_discover_tests(example_test DISCOVERY_MODE PRE_TEST)
+gtest_discover_tests(example_test)

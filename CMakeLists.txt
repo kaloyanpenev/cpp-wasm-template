@@ -44,6 +44,9 @@ endif()
 if(ENABLE_ASAN AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang|GNU")
   add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
   add_link_options(-fsanitize=address)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_link_options(-static-libasan)
+  endif()
 endif()
 
 # Clang-tidy
