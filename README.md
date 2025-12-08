@@ -6,15 +6,20 @@
 
 ## What’s in this repo
 
-Modern C++ starter that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module. 
+Modern C++ starter that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module.
+
 Tooling includes: 
 - CMake
 - GoogleTest
-- Emscripten (C++ to wasm compiler) and Vite (js module bundler)
+- Emscripten (C++ to wasm compiler)
+- Vite (JavaScript Module Bundler)
 - Code Sanitizers (ASan, UBSan, MSan, LSan, TSan)
-- Static analysis with clang-tidy and cppcheck
-- Formatting with clang-format
-- CI pipelines for all platforms/compilers, sanitation, static analysis, etc.
+- Clang-tidy
+- Cppcheck
+- Clang-format
+- Code Coverage
+- CI pipelines for all platforms/compilers
+- GitHub Pages deployment as part of CI
 
 ### Layout
 - `project.json` — single source of truth for project name and display name (consumed by CMake and Vite).
