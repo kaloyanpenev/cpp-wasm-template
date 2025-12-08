@@ -1,12 +1,20 @@
-[![ci](https://github.com/kaloyanpenev/cpp-hacking/actions/workflows/ci.yml/badge.svg)](https://github.com/kaloyanpenev/cpp-hacking/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/kaloyanpenev/cpp-hacking/branch/main/graph/badge.svg)](https://codecov.io/gh/kaloyanpenev/cpp-hacking)
-[![CodeQL](https://github.com/kaloyanpenev/cpp-hacking/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kaloyanpenev/cpp-hacking/actions/workflows/codeql-analysis.yml)
+[![ci](https://github.com/kaloyanpenev/cpp-wasm-template/actions/workflows/ci.yml/badge.svg)](https://github.com/kaloyanpenev/cpp-wasm-template/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kaloyanpenev/cpp-wasm-template/branch/main/graph/badge.svg)](https://codecov.io/gh/kaloyanpenev/cpp-wasm-template)
+[![CodeQL](https://github.com/kaloyanpenev/cpp-wasm-template/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kaloyanpenev/cpp-wasm-template/actions/workflows/codeql-analysis.yml)
 
 **Note**: Point the badge links to your own repository after cloning.
 
 ## What’s in this repo
 
-Modern C++ starter that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module. Tooling includes CMake, GoogleTest, Emscripten helpers, Vite, and optional sanitizers/static analysis presets.
+Modern C++ starter that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module. 
+Tooling includes: 
+- CMake
+- GoogleTest
+- Emscripten (C++ to wasm compiler) and Vite (js module bundler)
+- Code Sanitizers (ASan, UBSan, MSan, LSan, TSan)
+- Static analysis with clang-tidy and cppcheck
+- Formatting with clang-format
+- CI pipelines for all platforms/compilers, sanitation, static analysis, etc.
 
 ### Layout
 - `project.json` — single source of truth for project name and display name (consumed by CMake and Vite).
@@ -43,4 +51,3 @@ Update `project.json` to rename the project and UI:
 }
 ```
 If you plan to publish the web package to npm, also update `web/package.json` and `web/package-lock.json`; CI replaces the placeholder name automatically, local builds do not.
-
