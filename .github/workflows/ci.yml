@@ -248,8 +248,8 @@ jobs:
       - uses: actions/checkout@v6
       - name: Check formatting
         run: |
-          sudo apt-get update && sudo apt-get install -y clang-format
-          find src test -name '*.cpp' -o -name '*.hpp' -o -name '*.h' | xargs clang-format --dry-run --Werror
+          chmod +x ./run-clang-format.sh
+          ./run-clang-format.sh --dry-run --Werror
 
   static-analysis:
     runs-on: ubuntu-latest
