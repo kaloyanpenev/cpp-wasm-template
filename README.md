@@ -4,9 +4,11 @@
 
 **Note**: Point the badge links to your own repository after cloning.
 
+## [Run it in your browser](https://penev.me/cpp-wasm-template/)
+
 ## What’s in this repo
 
-Modern C++ starter that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module.
+Modern C++ starter project that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module.
 
 Tooling includes: 
 - CMake
