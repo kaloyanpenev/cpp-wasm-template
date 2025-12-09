@@ -16,7 +16,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # =============================================================================
 # Define available build types
 set(CMAKE_BUILD_TYPES Debug RelWithDebInfo Release)
-set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_BUILD_TYPES})
+
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_BUILD_TYPES})
+endif()
 
 # Set default build type to RelWithDebInfo if not specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

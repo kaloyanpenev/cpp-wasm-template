@@ -9,7 +9,7 @@ clang_format_version="18" # Hardcoded clang-format version to use
 # It takes in an optional argument --executable=<path_to_clang_format> to specify the clang-format executable.
 # This argument is primarily used by run-clang-format.bat when running on Windows.
 # If the executable is not provided, it installs clang-format-<version> using apt-get.
-# The script also accepts additional arguments that are passed directly to clang-format.
+# The script also accepts additional arguments that are passed directly to clang-format for CI purposes.
 
 # Default parameters
 directory="." # Recursively search from the repository root (script location)

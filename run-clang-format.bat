@@ -1,7 +1,9 @@
 @echo off
 setlocal
 
-:: This script requires a path to clang-format.exe to be provided as the first argument.
+:: clang-format script for Windows. 
+:: This script is used to run clang-format on all C/C++ files in the current directory and its subdirectories.
+:: This script requires a path to clang-format.exe version 18 to be provided as the first argument.
 :: Usage: run-clang-format.bat "path\to\clang-format.exe" [additional arguments...]
 
 if "%~1"=="" (

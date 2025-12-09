@@ -18,8 +18,8 @@ Tooling includes:
 - Code Sanitizers (ASan, UBSan, MSan, LSan, TSan)
 - Clang-tidy
 - Cppcheck
-- Clang-format
-- Code Coverage
+- Clang-format (my personal preferences)
+- Code Coverage with codecov
 - CI pipelines for all platforms/compilers
 - GitHub Pages deployment as part of CI
 
@@ -30,6 +30,8 @@ Tooling includes:
 - `cmake/` — shared options, warnings, sanitizers, cache, static analysis, and Emscripten configuration.
 - `web/` — Vite app that loads the generated WASM module and shows console output/status.
 - `build-wasm.sh` — helper script to configure and build the Emscripten target.
+- `run-clang-format.sh` — helper script to run clang-format on all C++ files in the current directory.
+- `run-clang-format.bat` — helper script to invoke run-clang-format.sh on Windows. Requires path to clang-format.exe passed in as first arg.
 
 ## Quick start (native)
 ```bash
