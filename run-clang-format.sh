@@ -12,8 +12,13 @@ clang_format_version="18" # Hardcoded clang-format version to use
 # The script also accepts additional arguments that are passed directly to clang-format.
 
 # Default parameters
-directory="." # Recursively search from the current directory
-extension_regex="c|cpp|h|hpp|tpp" # All file types to format
+directory="." # Recursively search from the repository root (script location)
+
+# Directories to exclude from formatting (contain generated/build files)
+exclude_dirs=("build" "build-wasm" "node_modules" ".git")
+
+# File extensions to format
+format_extensions=("*.c" "*.cpp" "*.h" "*.hpp" "*.tpp")
 
 # Parse command-line arguments for --executable=... and collect the rest
 executable=""
@@ -66,16 +71,32 @@ else
     fi
 fi
 
+echo "Formatting directory: $(pwd)"
 echo "Using clang-format executable: $executable"
-echo "Searching for files matching pattern: .*\.($extension_regex)"
+echo "Searching for files with extensions: ${format_extensions[*]}"
+
+# Build prune conditions for excluded directories
+prune_conditions=""
+for dir in "${exclude_dirs[@]}"; do
+    prune_conditions="${prune_conditions} -name ${dir} -o"
+done
+prune_conditions="${prune_conditions% -o}"  # Remove trailing " -o"
+
+# Build name conditions for file extensions
+name_conditions=""
+for ext in "${format_extensions[@]}"; do
+    name_conditions="${name_conditions} -name ${ext} -o"
+done
+name_conditions="${name_conditions% -o}"  # Remove trailing " -o"
 
 # Run clang-format using find & xargs while passing additional arguments
+# Exclude build directories and other generated directories for better performance
 find "$directory" \
-  -regextype posix-extended \
-  -iregex ".*\.($extension_regex)" \
+  \( ${prune_conditions} \) -prune -o \
   -type f \
+  \( ${name_conditions} \) \
   -print0 | \
-xargs --null --max-procs=0 "$executable" -style=file -i "${extra_args[@]}"
+xargs -r --null --max-procs=0 "$executable" -style=file -i "${extra_args[@]}"
 
 echo "Clang-format completed."
 

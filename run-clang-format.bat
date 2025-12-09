@@ -1,4 +1,5 @@
 @echo off
+setlocal
 
 :: This script requires a path to clang-format.exe to be provided as the first argument.
 :: Usage: run-clang-format.bat "path\to\clang-format.exe" [additional arguments...]
@@ -6,6 +7,15 @@
 if "%~1"=="" (
     echo Error: Please provide the path to clang-format.exe as the first argument.
     echo Usage: run-clang-format.bat "path\to\clang-format.exe" [additional arguments...]
+    exit /b 1
+)
+
+:: Resolve the directory of this script (trailing backslash included)
+set "SCRIPT_DIR=%~dp0"
+set "SCRIPT_SH=%SCRIPT_DIR%run-clang-format.sh"
+
+if not exist "%SCRIPT_SH%" (
+    echo Error: run-clang-format.sh not found at "%SCRIPT_SH%"
     exit /b 1
 )
 
@@ -32,6 +42,6 @@ if "%EXE%" == "NONE" (
 )
 
 :: Apply the formatting by running the shell script - /D is to set the working dir, /W is to wait for the process to finish /B is to not open a new window
-echo Applying clang-format to %~dp0...
-start "apply-clang-format" /D "%~dp0" /W /B "%EXE%" "%~dp0/run-clang-format.sh" --executable="%CLANG_FORMAT_EXE%" %*
+start "apply-clang-format" /D "%SCRIPT_DIR%" /W /B "%EXE%" "%SCRIPT_SH%" --executable="%CLANG_FORMAT_EXE%"
 
+endlocal
