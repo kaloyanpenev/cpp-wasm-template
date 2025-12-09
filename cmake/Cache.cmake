@@ -1,5 +1,11 @@
 #[[ Enable compiler cache (ccache/sccache) if available ]]
 function(project_enable_cache)
+  # Check if compiler cache is enabled via option
+  if(NOT ENABLE_COMPILER_CACHE)
+    message(STATUS "Compiler cache is disabled via ENABLE_COMPILER_CACHE option")
+    return()
+  endif()
+
   set(CACHE_OPTION
       "ccache"
       CACHE STRING "Compiler cache to be used")

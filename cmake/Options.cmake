@@ -56,6 +56,7 @@ option(ENABLE_MSAN "Enable MemorySanitizer (Clang only)" ${ENABLE_MSAN_DEFAULT})
 option(ENABLE_CLANG_TIDY "Enable clang-tidy" ${ENABLE_CLANG_TIDY_DEFAULT})
 option(ENABLE_CPPCHECK "Enable cppcheck" ${ENABLE_CPPCHECK_DEFAULT})
 option(ENABLE_IWYU "Enable include-what-you-use" ${ENABLE_IWYU_DEFAULT})
+option(ENABLE_COMPILER_CACHE "Enable compiler cache (ccache/sccache)" ON)
 option(WASM_SINGLE_FILE "Embed WASM in JS (Emscripten only)" OFF)
 option(BUILD_TESTING "Build the testing tree" ${BUILD_TESTING_DEFAULT})
 

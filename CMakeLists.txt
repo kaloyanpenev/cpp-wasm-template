@@ -11,10 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# =============================================================================
 # Build Type Configuration
-# =============================================================================
-# Define available build types
 set(CMAKE_BUILD_TYPES Debug RelWithDebInfo Release)
 
 if(NOT CMAKE_CONFIGURATION_TYPES)
@@ -38,12 +35,10 @@ else()
   # GCC/Clang optimization flags
   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g" CACHE STRING "Debug compiler flags" FORCE)
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "RelWithDebInfo compiler flags" FORCE)
-  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "Release compiler flags" FORCE)
+  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG" CACHE STRING "Release compiler flags" FORCE)
 endif()
 
-# =============================================================================
 # CMake modules
-# =============================================================================
 # Configure build type defaults and define CMake options
 include(cmake/Options.cmake)
 # Enable compiler cache (ccache/sccache) when available
@@ -60,21 +55,14 @@ include(cmake/InterproceduralOptimization.cmake)
 # Try to enable compiler cache early in configuration
 project_enable_cache()
 
-# =============================================================================
 # Main target
-# =============================================================================
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings project_sanitizers)
 
-# =============================================================================
 # Emscripten configuration
-# =============================================================================
-# Configure Emscripten build settings (must be after target creation)
 include(cmake/Emscripten.cmake)
 
-# =============================================================================
-# Tests
-# =============================================================================
+# Testing
 if(BUILD_TESTING)
   enable_testing()
   include(CTest)
@@ -83,9 +71,6 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-# =============================================================================
-# MSVC tweaks
-# =============================================================================
 if(MSVC)
   set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif()
