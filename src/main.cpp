@@ -1,14 +1,8 @@
-#include <iostream>
-
 #include <libExample/libExample.h>
 
-#include "exampleHeader.h"
+#include "headerExample.h"
 
 int main()
 {
-	libExample::helloWorldCPP23();
-
-	std::cout << "PI is: " << exampleHeader::PI << "\n";
-
-	return 0;
+	return libExample::runApp(headerExample::exampleNum);
 }

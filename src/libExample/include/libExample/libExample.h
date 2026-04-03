@@ -2,5 +2,5 @@
 
 namespace libExample
 {
-void helloWorldCPP23();
+int runApp(double num);
 }

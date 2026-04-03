@@ -35,7 +35,7 @@ Tooling includes:
 
 ## Quick start (native)
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake -S . -B build
 cmake --build build
 ctest --test-dir build
 ./build/your_project_name            # executable name follows project.json

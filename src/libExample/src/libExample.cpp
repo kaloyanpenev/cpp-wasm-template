@@ -2,7 +2,8 @@
 
 #include <print>
 
-void libExample::helloWorldCPP23()
+int libExample::runApp(double num)
 {
-	std::print("Hello world {}!\n", "from libExample, an internal library");
+	std::print("Hello world from libExample. Number is {}", num);
+	return 0;
 }

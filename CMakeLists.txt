@@ -55,6 +55,30 @@ include(cmake/InterproceduralOptimization.cmake)
 # Try to enable compiler cache early in configuration
 project_enable_cache()
 
+# Testing
+if(BUILD_TESTING)
+  include(FetchContent)
+
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  )
+  set(gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+
+  # Disable static analysis on gtest
+  foreach(_target gtest gtest_main gmock gmock_main)
+    if(TARGET ${_target})
+      set_target_properties(${_target} PROPERTIES CXX_CLANG_TIDY "" CXX_CPPCHECK "")
+    endif()
+  endforeach()
+
+  enable_testing()
+  include(CTest)
+
+endif()
+
 # Main target
 add_subdirectory(src)
 
@@ -64,15 +88,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE project_warnings project_sanitizer
 
 # Emscripten configuration
 include(cmake/Emscripten.cmake)
-
-# Testing
-if(BUILD_TESTING)
-  enable_testing()
-  include(CTest)
-  if(NOT EMSCRIPTEN)
-    add_subdirectory(test)
-  endif()
-endif()
 
 if(MSVC)
   set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
