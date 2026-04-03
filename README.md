@@ -46,10 +46,9 @@ Prerequisites:
 - Emscripten SDK installed and `emcmake`/`emmake` available (`source /path/to/emsdk_env.sh`)
 - Node.js 18.0.0 or higher (required for Vite 6)
 ```bash
+cd web/
 ./build-wasm.sh Release         # outputs to build-wasm/web/
-cd build-wasm/web
-npm install                     # install Vite deps once
-npm run dev                     # serves the WASM demo UI at http://localhost:3000
+./run-wasm.sh                   # serves the wasm demo UI at http://localhost:3000
 ```
 The Vite config injects `project.json` values and points the UI at the generated `<name>.js` module.
 

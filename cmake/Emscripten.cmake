@@ -23,6 +23,7 @@ if(EMSCRIPTEN)
     -sENVIRONMENT=web,worker,node
     -sALLOW_MEMORY_GROWTH=1
     -sDISABLE_EXCEPTION_CATCHING=1
+    --bind  # Enable embind for C++/JS bindings
     $<$<BOOL:${WASM_SINGLE_FILE}>:-sSINGLE_FILE=1>)
   
   file(GLOB WEB_ASSETS "${CMAKE_SOURCE_DIR}/web/*")

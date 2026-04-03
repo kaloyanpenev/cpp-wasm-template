@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_TYPE="${1:-Release}"
 BUILD_DIR="$PROJECT_ROOT/build-wasm"
 THREADS="${NUMBER_OF_PROCESSORS:-$(command -v nproc >/dev/null 2>&1 && nproc || echo 4)}"
@@ -35,7 +35,7 @@ if ! command -v emcmake &> /dev/null; then
     exit 1
 fi
 
-echo "=== Building order-engine for WebAssembly ==="
+echo "=== Building for WebAssembly ==="
 echo "Build type: $BUILD_TYPE"
 echo "Build directory: $BUILD_DIR"
 echo ""

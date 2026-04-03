@@ -21,7 +21,10 @@ endif()
 if(ENABLE_IWYU)
   find_program(INCLUDE_WHAT_YOU_USE include-what-you-use)
   if(INCLUDE_WHAT_YOU_USE)
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${INCLUDE_WHAT_YOU_USE})
+    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE
+      ${INCLUDE_WHAT_YOU_USE}
+      -Wno-unknown-warning-option
+    )
     message(STATUS "include-what-you-use enabled")
   else()
     message(WARNING "include-what-you-use requested but not found")

@@ -1,7 +1,14 @@
 #include <iostream>
 
+#include <libExample/libExample.h>
+
+#include "exampleHeader.h"
+
 int main()
 {
-	std::cout << "Hello, world!\n";
+	libExample::helloWorldCPP23();
+
+	std::cout << "PI is: " << exampleHeader::PI << "\n";
+
 	return 0;
 }
