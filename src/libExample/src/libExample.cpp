@@ -4,6 +4,6 @@
 
 int libExample::runApp(double num)
 {
-	std::print("Hello world from libExample. Number is {}", num);
+	std::println("Hello world from libExample. Number is {}", num);
 	return 0;
 }
