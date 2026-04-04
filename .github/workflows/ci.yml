@@ -304,6 +304,10 @@ jobs:
         working-directory: build
         run: ctest --output-on-failure
 
+      - name: Run binary
+        working-directory: build/src
+        run: your_project_name
+
       - name: Generate coverage report
         run: gcovr --root . --gcov-executable gcov-14 --exclude build/ --xml-pretty --output build/coverage.xml
 
