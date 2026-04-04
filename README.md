@@ -39,8 +39,8 @@ Tooling includes:
 ```bash
 cmake -S . -B build
 cmake --build build
-ctest --test-dir build
-./build/your_project_name            # executable name follows project.json
+ctest --test-dir build         # will find tests if you have BUILD_TESTING enabled in CMake
+./build/src/your_project_name  # executable name follows project.json
 ```
 
 ## Build for WebAssembly
