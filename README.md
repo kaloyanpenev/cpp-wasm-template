@@ -8,20 +8,21 @@
 
 ## What’s in this repo
 
-Modern C++ starter project that builds both a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module.
+C++23 starter template that can build a native binary and a WebAssembly target, with a minimal web UI to load and exercise the WASM module. It has full static analysis, CI and automatic github-pages deployment.
 
 Tooling includes: 
 - CMake
-- GoogleTest
 - Emscripten (C++ to wasm compiler)
-- Vite (web build tool)
+- Vite (to package and serve the wasm module)
 - Code Sanitizers (ASan, UBSan, MSan, LSan, TSan)
 - Clang-tidy
 - Cppcheck
 - Clang-format (my personal preferences)
-- Code Coverage with codecov
-- CI pipelines for all platforms/compilers
-- GitHub Pages deployment as part of CI
+- GoogleTest
+- Automatic project naming
+- Automatic Code Coverage with codecov (per-commit CI)
+- Build validation for all platforms/compilers (per-commit CI)
+- Automatic GitHub Pages deployment (per-commit CI)
 
 ### Layout
 - `project.json` — single source of truth for project name and display name (consumed by CMake and Vite).
@@ -29,7 +30,8 @@ Tooling includes:
 - `test/` — GoogleTest example and CTest wiring.
 - `cmake/` — shared options, warnings, sanitizers, cache, static analysis, and Emscripten configuration.
 - `web/` — Vite app that loads the generated WASM module and shows console output/status.
-- `build-wasm.sh` — helper script to configure and build the Emscripten target.
+- `web/build-wasm.sh` — helper script to configure and build the Emscripten target.
+- `web/run-wasm.sh` — helper script to locally run the built WASM module with the web UI.
 - `run-clang-format.sh` — helper script to run clang-format on all C++ files in the current directory.
 - `run-clang-format.bat` — helper script to invoke run-clang-format.sh on Windows. Requires path to clang-format.exe passed in as first arg.
 
