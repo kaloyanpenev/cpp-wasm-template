@@ -305,7 +305,7 @@ jobs:
         run: ctest --output-on-failure
 
       - name: Generate coverage report
-        run: gcovr --root . --xml-pretty --output build/coverage.xml
+        run: gcovr --root . --gcov-executable gcov-14 --exclude build/ --xml-pretty --output build/coverage.xml
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
