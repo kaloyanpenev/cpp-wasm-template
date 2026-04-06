@@ -308,7 +308,7 @@ jobs:
         run: gcovr --root . --gcov-executable gcov-14 --exclude build/ --xml-pretty --output build/coverage.xml
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
