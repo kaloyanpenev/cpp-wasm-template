@@ -217,7 +217,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Emscripten
-        uses: mymindstorm/setup-emsdk@v14
+        uses: mymindstorm/setup-emsdk@v16
         with:
           version: 'latest'
           actions-cache: true
